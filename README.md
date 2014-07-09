@@ -8,17 +8,36 @@ This is a quick and dirty script to generate a static gallery from a set of imag
 http://photos.hilscher.ca/2014-algonquin/
 
 
+### Prerequisites
+
+1. Ruby ( https://www.ruby-lang.org/en/downloads/ )
+
+2. Git ( http://git-scm.com/book/en/Getting-Started-Installing-Git )
+
 ### Usage
 
-1. Copy your images into images/*
+1. Clone or download the repo
 
-2. Run the generate
+```
+git clone https://github.com/blakehilscher/static-gallery-generator.git
+```
+
+2. Install depedencies
+
+```
+cd static-gallery-generator
+bundle install
+```
+
+3. Copy your images into images/
+
+4. Run the generate
 
 ```
 ruby generate.rb
 ```
 
-3. Upload the result to a server.
+5. Upload the result to a server.
 
 
 ### Future
