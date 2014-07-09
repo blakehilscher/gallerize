@@ -3,6 +3,7 @@ require 'mini_magick'
 class Gallery
   
   TITLE = 'Photo Gallery'
+  PER_PAGE = 40
   
   def self.generate
     new.perform
@@ -24,7 +25,7 @@ class Gallery
   
   def images_to_html(some_images, ticker=0, name=nil)
     some_images ||= []
-    navigation = (images.count / per_page).times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">Page #{r}</a>} }.join("\n")
+    navigation = (images.count / per_page.to_f).ceil.times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">Page #{r}</a>} }.join("\n")
     html = %Q{
       #{body}
       <div class="navigation">
@@ -47,7 +48,7 @@ class Gallery
   
   def images
     ticker = 0
-    @images ||= Dir.glob('images/*.jpg').reject{|f| f =~ /thumbnail/ }.collect do |f| 
+    @images ||= Dir.glob('images/*.{jpg,JPG,png,PNG}').reject{|f| f =~ /thumbnail/ }.collect do |f| 
       image_thumbnail = generate_thumbnail(f)
       
       even = (ticker % 2 == 0) ? 'image-even' : 'image-odd'
@@ -55,7 +56,7 @@ class Gallery
       src = %Q{
         <div class="image #{even} #{fourth} image-#{ticker}">
           <div class="inner-image">
-            <a href="#{f}" class="fancybox" target="_blank"><img src="#{image_thumbnail}" alt="" /></a>
+            <a href="#{f}" class="fancybox" rel="group" target="_blank"><img src="#{image_thumbnail}" alt="" /></a>
           </div>
         </div>
       }
@@ -99,16 +100,19 @@ class Gallery
   end
   
   def per_page
-    4 * 12
+    PER_PAGE
   end
   
   def generate_thumbnail(f)
     
-    image_basename = File.basename(f, '.jpg')
-    image_thumbnail = "images/#{image_basename}-thumbnail.jpg"
+    image_basename = f.split(".")
+    image_ext = image_basename.pop
+    image_basename = image_basename.join('.')
+    image_thumbnail = "#{image_basename}-thumbnail.#{image_ext}"
     
     unless File.exists?(image_thumbnail)
       image = MiniMagick::Image.open(f)
+      puts "generating #{image_thumbnail} from #{f}"
       image.resize "400x260"
       image.write image_thumbnail
     end
