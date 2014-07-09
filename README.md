@@ -3,6 +3,11 @@
 This is a quick and dirty script to generate a static gallery from a set of images.
 
 
+### Example
+
+http://photos.hilscher.ca/2014-algonquin/
+
+
 ### Usage
 
 1. Copy your images into images/*
