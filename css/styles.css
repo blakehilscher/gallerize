@@ -1,0 +1,48 @@
+body{
+  font-family: arial;
+}
+.images{
+  overflow: auto;
+}
+.image{
+  float: left;
+  width: 25%;
+  overflow:hidden;
+  text-align: center;
+}
+.inner-image{
+  margin: 5px;
+  overflow:hidden;
+  height:260px;
+  background-color: #f2f2f2;
+}
+.image img{
+  max-width: 100%;
+  max-height: 260px;
+}
+.image-fourth{
+  clear:both;
+}
+.navigation{
+  overflow: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+.navigation .active,
+.navigation a:hover{
+  border: 1px solid #901414;
+  background-color: #901414;
+  color: #fff;
+}
+.navigation a{
+  float: left;
+  display: inline-block;
+  text-decoration: none;
+  padding: 10px;
+  background: #ddd;
+  margin-right: 5px;
+  color: #901414;
+  border: 1px solid #A36969;
+  font-weight: bold;
+}
