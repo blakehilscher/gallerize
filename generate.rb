@@ -4,6 +4,7 @@ class Gallery
   
   TITLE = 'Photo Gallery'
   PER_PAGE = 40
+  TRACKING=''
   
   def self.generate
     new.perform
@@ -84,6 +85,8 @@ class Gallery
           });
         </script>
         
+        #{tracking_js}
+        
         <title>#{TITLE}</title>
         <link rel="stylesheet" href="css/styles.css" />
         </head>
@@ -101,6 +104,22 @@ class Gallery
   
   def per_page
     PER_PAGE
+  end
+  
+  def tracking_js
+    return unless TRACKING.present?
+    %Q{
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', '#{TRACKING}', 'auto');
+        ga('send', 'pageview');
+
+      </script>
+    }
   end
   
   def generate_thumbnail(f)
