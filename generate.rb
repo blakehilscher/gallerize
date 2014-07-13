@@ -3,7 +3,7 @@ require 'mini_magick'
 class Gallery
   
   TITLE = 'Photo Gallery'
-  PER_PAGE = 40
+  PER_PAGE = 4 * 20
   TRACKING=''
   
   def self.generate
@@ -12,12 +12,11 @@ class Gallery
   
   def perform
     ticker = 0
-    images_to_html(images.each_slice(per_page).to_a.first, 1, 'index.html')
+    images_to_html(images.each_slice(per_page).to_a.first, 0, 'index.html')
     images.each_slice(per_page) do |some_images|
       images_to_html(some_images, ticker)
       ticker = ticker + 1
     end
-    all_to_html
   end 
   
   def all_to_html
@@ -31,14 +30,12 @@ class Gallery
       #{body}
       <div class="navigation">
         #{navigation}
-        <a href="all.html">View All</a>
       </div>
       <div class="images">
       #{some_images.join("\n")}
       </div>
       <div class="navigation">
         #{navigation}
-        <a href="all.html">View All</a>
       </div>
       #{footer}
     }

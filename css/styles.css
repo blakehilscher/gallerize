@@ -46,3 +46,9 @@ body{
   border: 1px solid #A36969;
   font-weight: bold;
 }
+
+@media (max-width: 600px) {
+  .image{
+    float: none;
+  }
+}
