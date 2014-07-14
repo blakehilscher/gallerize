@@ -11,7 +11,7 @@ class Gallery
   PER_PAGE = 4 * 25
   TRACKING=''
   IMAGE_TYPES='jpg,JPG,png,PNG'
-  OUTPUT_DIR="#{Date.today.strftime('%Y-%m')}-#{File.basename(File.expand_path('.'))}-gallery".downcase.underscore.gsub('_','-')
+  WORKERS=4
   
   def self.generate
     new.perform
@@ -24,7 +24,7 @@ class Gallery
       reset
       generate_images
       ticker = 0
-      images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(OUTPUT_DIR, 'index.html'))
+      images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(output_dir, 'index.html'))
       images.each_slice(per_page) do |some_images|
         images_to_html(some_images, ticker)
         ticker = ticker + 1
@@ -34,7 +34,7 @@ class Gallery
   end 
   
   def generate_images
-    Parallel.map( Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }, in_processes: 8 ) do |f| 
+    Parallel.map( Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }, in_processes: WORKERS ) do |f| 
       generate_image(f)
       generate_thumbnail(f)
     end
@@ -56,7 +56,7 @@ class Gallery
       </div>
       #{footer}
     }
-    name ||= File.join( OUTPUT_DIR, "images-#{ticker}.html" )
+    name ||= File.join( output_dir, "images-#{ticker}.html" )
     puts "generate #{name}"
     File.write(name, html)
   end
@@ -140,7 +140,7 @@ class Gallery
   
   def generate_image(image_path)
     
-    image_output = File.join(OUTPUT_DIR, 'images', image_path)
+    image_output = File.join(output_dir, 'images', image_path.downcase)
     
     unless File.exists?(image_output)
       puts "generate_image 1200x800 #{image_output}"
@@ -154,14 +154,14 @@ class Gallery
       end
       image.write image_output
     end
-    image_output.gsub(OUTPUT_DIR, '')
+    image_output.gsub(output_dir, '')
   end
   
   def generate_thumbnail(f)
-    image_basename = f.split(".")
+    image_basename = f.downcase.split(".")
     image_ext = image_basename.pop
     image_basename = image_basename.join('.')
-    image_thumbnail = File.join(OUTPUT_DIR, 'images', "#{image_basename}-thumbnail.#{image_ext}")
+    image_thumbnail = File.join(output_dir, 'images', "#{image_basename}-thumbnail.#{image_ext}")
     
     unless File.exists?(image_thumbnail)
       puts "generate_thumbnail 400x260 #{image_thumbnail}"
@@ -175,26 +175,33 @@ class Gallery
       end
       image.write image_thumbnail
     end
-    image_thumbnail.gsub(OUTPUT_DIR, '')
+    image_thumbnail.gsub(output_dir, '')
   end
   
   def title
     File.basename(File.expand_path('.')).titleize
   end
   
+  def output_dir
+    dir = File.basename(File.expand_path('.'))
+    dir = "#{Date.today.strftime('%Y-%m')}-#{dir}" unless dir =~ /^[0-9]{4}/
+    dir = dir.downcase.underscore.gsub('_','-')
+    dir
+  end
+  
   def reset
-    Dir.glob(File.join(OUTPUT_DIR, '*.html')){|f| FileUtils.rm(f) }
-    FileUtils.mkdir(OUTPUT_DIR) unless File.exists?(OUTPUT_DIR)
-    FileUtils.mkdir(File.join(OUTPUT_DIR,'images')) unless File.exists?(File.join(OUTPUT_DIR,'images'))
+    Dir.glob(File.join(output_dir, '*.html')){|f| FileUtils.rm(f) }
+    FileUtils.mkdir(output_dir) unless File.exists?(output_dir)
+    FileUtils.mkdir(File.join(output_dir,'images')) unless File.exists?(File.join(output_dir,'images'))
     copy('css', 'js')
   end
   
   def copy(*folders)
     folders.each do |folder|
-      output_dir = File.join( OUTPUT_DIR, folder )
-      puts "copy #{File.join( ROOT, folder )} #{output_dir}"
-      FileUtils.rm_rf( output_dir )
-      FileUtils.cp_r( File.join( ROOT, folder ), output_dir )
+      outdir = File.join( output_dir, folder )
+      puts "copy #{File.join( ROOT, folder )} #{outdir}"
+      FileUtils.rm_rf( outdir )
+      FileUtils.cp_r( File.join( ROOT, folder ), outdir )
     end
   end
   

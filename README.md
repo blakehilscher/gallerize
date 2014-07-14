@@ -3,18 +3,15 @@
 This is a quick and dirty script to generate a static gallery from a set of images.
 
 
-### Example
-
-http://photos.hilscher.ca/2014-algonquin/
-
-
-### Prerequisites
-
-1. Ruby ( https://www.ruby-lang.org/en/downloads/ )
-
-2. Git ( http://git-scm.com/book/en/Getting-Started-Installing-Git )
-
 ### Usage
+
+```
+$ cd folder-with-pictures
+$ gallerize
+```
+
+
+### Installation
 
 * Clone or download the repo
 
@@ -29,15 +26,7 @@ cd static-gallery-generator
 bundle install
 ```
 
-* Copy your images into images/
-
-* Run the generate
-
-```
-ruby generate.rb
-```
-
-* Upload the result to a server.
+* Link bin/gallerize into your PATH
 
 
 ### Future
