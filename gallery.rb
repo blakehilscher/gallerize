@@ -11,7 +11,7 @@ class Gallery
   PER_PAGE = 4 * 20
   TRACKING=''
   IMAGE_TYPES='jpg,JPG,png,PNG'
-  OUTPUT_DIR='gallery/'
+  OUTPUT_DIR="#{Date.today.strftime('%Y-%m')}-#{File.basename(File.expand_path('.'))}-gallery".downcase.underscore.gsub('_','-')
   
   def self.generate
     new.perform
