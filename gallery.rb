@@ -97,18 +97,21 @@ class Gallery
         <script type="text/javascript" src="js/jquery.masonry.js"></script>
         
         <link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css" media="screen" />
 
         <script type="text/javascript">
-          imagesLoaded( '#images-container', function( instance ) {
-            $('.images').show();
-            $('.fancybox').fancybox();
+          $(document).ready(function(){
+            $('#images-container').imagesLoaded( function() {
+              $('.images').show();
             
-            var container = document.querySelector('#images-container');
-            var msnry = new Masonry( container, {
+              var container = document.querySelector('#images-container');
+              var msnry = new Masonry( container, {
 
-              itemSelector: '.image'
+                itemSelector: '.image'
+              });
+
+              $('.fancybox').fancybox();
             });
-            
           });
         </script>
         
