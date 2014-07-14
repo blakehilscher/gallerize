@@ -42,7 +42,7 @@ class Gallery
   
   def images_to_html(some_images, ticker=0, name=nil)
     some_images ||= []
-    navigation = (images.count / per_page.to_f).ceil.times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">Page #{r}</a>} }.join("\n")
+    navigation = (images.count / per_page.to_f).ceil.times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">#{r}</a>} }.join("\n")
     html = %Q{
       #{body}
       <div class="navigation">
@@ -98,7 +98,8 @@ class Gallery
         
         <link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
         <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css" media="screen" />
-
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        
         <script type="text/javascript">
           $(document).ready(function(){
             $('#images-container').imagesLoaded( function() {
@@ -121,7 +122,7 @@ class Gallery
         <link rel="stylesheet" href="css/styles.css" />
         </head>
         <body>
-        <h1>#{title}</h1>
+        <h1 class="page-title">#{title}</h1>
       }
   end
   
