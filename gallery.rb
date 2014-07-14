@@ -1,27 +1,35 @@
+require 'active_support/all'
 require 'mini_magick'
+require 'pry'
+require 'fileutils'
+
+ROOT = File.expand_path( File.join(__FILE__, '..') )
 
 class Gallery
   
-  TITLE = 'Photo Gallery'
   PER_PAGE = 4 * 20
   TRACKING=''
+  IMAGE_TYPES='jpg,JPG,png,PNG'
+  OUTPUT_DIR='gallery/'
   
   def self.generate
     new.perform
   end
   
   def perform
-    ticker = 0
-    images_to_html(images.each_slice(per_page).to_a.first, 0, 'index.html')
-    images.each_slice(per_page) do |some_images|
-      images_to_html(some_images, ticker)
-      ticker = ticker + 1
+    if Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }.blank?
+      puts "no images found in #{ROOT} matching #{IMAGE_TYPES}"
+    else
+      reset
+      ticker = 0
+      images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(OUTPUT_DIR, 'index.html'))
+      images.each_slice(per_page) do |some_images|
+        images_to_html(some_images, ticker)
+        ticker = ticker + 1
+      end
+      
     end
   end 
-  
-  def all_to_html
-    images_to_html(images, ticker=-1, 'all.html')
-  end
   
   def images_to_html(some_images, ticker=0, name=nil)
     some_images ||= []
@@ -39,22 +47,24 @@ class Gallery
       </div>
       #{footer}
     }
-    name ||= "images-#{ticker}.html"
-    puts "generated #{name}"
+    name ||= File.join( OUTPUT_DIR, "images-#{ticker}.html" )
+    puts "generate #{name}"
     File.write(name, html)
   end
   
   def images
     ticker = 0
-    @images ||= Dir.glob('images/*.{jpg,JPG,png,PNG}').reject{|f| f =~ /thumbnail/ }.collect do |f| 
+    @images ||= Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }.collect do |f| 
+      image_fullsize = generate_image(f)
       image_thumbnail = generate_thumbnail(f)
       
       even = (ticker % 2 == 0) ? 'image-even' : 'image-odd'
+      third = (ticker % 3 == 0) ? 'image-third' : ''
       fourth = (ticker % 4 == 0) ? 'image-fourth' : ''
       src = %Q{
-        <div class="image #{even} #{fourth} image-#{ticker}">
+        <div class="image #{even} #{fourth} #{third} image-#{ticker}">
           <div class="inner-image">
-            <a href="#{f}" class="fancybox" rel="group" target="_blank"><img src="#{image_thumbnail}" alt="" /></a>
+            <a href="#{image_fullsize}" class="fancybox" rel="group" target="_blank"><img src="#{image_thumbnail}" alt="" /></a>
           </div>
         </div>
       }
@@ -84,11 +94,11 @@ class Gallery
         
         #{tracking_js}
         
-        <title>#{TITLE}</title>
+        <title>#{title}</title>
         <link rel="stylesheet" href="css/styles.css" />
         </head>
         <body>
-        <h1>#{TITLE}</h1>
+        <h1>#{title}</h1>
       }
   end
   
@@ -104,7 +114,7 @@ class Gallery
   end
   
   def tracking_js
-    return unless TRACKING.present?
+    return if TRACKING == ''
     %Q{
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -119,20 +129,64 @@ class Gallery
     }
   end
   
-  def generate_thumbnail(f)
+  def generate_image(image_path)
     
+    image_output = File.join(OUTPUT_DIR, 'images', image_path)
+    
+    unless File.exists?(image_output)
+      puts "generate_image 1200x800 #{image_output}"
+      image = MiniMagick::Image.open(image_path)
+      image.auto_orient
+      width,height = image['width'],image['height']
+      if width > height
+        image.resize "1200x800"
+      else
+        image.resize "800x1200"
+      end
+      image.write image_output
+    end
+    image_output.gsub(OUTPUT_DIR, '')
+  end
+  
+  def generate_thumbnail(f)
     image_basename = f.split(".")
     image_ext = image_basename.pop
     image_basename = image_basename.join('.')
-    image_thumbnail = "#{image_basename}-thumbnail.#{image_ext}"
+    image_thumbnail = File.join(OUTPUT_DIR, 'images', "#{image_basename}-thumbnail.#{image_ext}")
     
     unless File.exists?(image_thumbnail)
+      puts "generate_thumbnail 400x260 #{image_thumbnail}"
       image = MiniMagick::Image.open(f)
-      puts "generating #{image_thumbnail} from #{f}"
-      image.resize "400x260"
+      image.auto_orient
+      width,height = image['width'],image['height']
+      if width > height
+        image.resize "600x400"
+      else
+        image.resize "400x600"
+      end
       image.write image_thumbnail
     end
-    image_thumbnail
+    image_thumbnail.gsub(OUTPUT_DIR, '')
+  end
+  
+  def title
+    File.basename(ROOT).titleize
+  end
+  
+  def reset
+    Dir.glob(File.join(OUTPUT_DIR, '*.html')){|f| FileUtils.rm(f) }
+    FileUtils.mkdir(OUTPUT_DIR) unless File.exists?(OUTPUT_DIR)
+    FileUtils.mkdir(File.join(OUTPUT_DIR,'images')) unless File.exists?(File.join(OUTPUT_DIR,'images'))
+    copy('css', 'js')
+  end
+  
+  def copy(*folders)
+    folders.each do |folder|
+      output_dir = File.join( OUTPUT_DIR, folder )
+      puts "copy #{File.join( ROOT, folder )} #{output_dir}"
+      FileUtils.rm_rf( output_dir )
+      FileUtils.cp_r( File.join( ROOT, folder ), output_dir )
+    end
   end
   
 end

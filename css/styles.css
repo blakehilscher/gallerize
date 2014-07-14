@@ -50,5 +50,34 @@ body{
 @media (max-width: 600px) {
   .image{
     float: none;
+    width: auto;
+  }
+  .image img{
+    width: 100%;
+    max-width: none;
+    max-height: none;
+  }
+  .image .inner-image{
+    height: auto;
+  }
+}
+
+@media (min-width: 600px) and (max-width: 1200px)  {
+  .image{
+    float: left;
+    width: 50%;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1800px)  {
+  .image{
+    float: left;
+    width: 33%;
+  }
+  .image-fourth{
+    clear: none;
+  }
+  .image-third{
+    clear: both;
   }
 }
