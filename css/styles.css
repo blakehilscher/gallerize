@@ -2,26 +2,16 @@ body{
   font-family: arial;
 }
 .images{
-  overflow: auto;
-}
-.image{
-  float: left;
-  width: 25%;
-  overflow:hidden;
-  text-align: center;
+  overflow: hidden;
+  display:none;
 }
 .inner-image{
   margin: 5px;
   overflow:hidden;
-  height:260px;
   background-color: #f2f2f2;
 }
 .image img{
-  max-width: 100%;
-  max-height: 260px;
-}
-.image-fourth{
-  clear:both;
+  width: 100%;
 }
 .navigation{
   overflow: auto;
@@ -46,12 +36,15 @@ body{
   border: 1px solid #A36969;
   font-weight: bold;
 }
-
-@media (max-width: 600px) {
-  .image{
-    float: none;
-    width: auto;
-  }
+/*
+.image{
+  float: left;
+  width: 25%;
+  overflow:hidden;
+  text-align: center;
+}
+*/
+/*@media (max-width: 600px) {
   .image img{
     width: 100%;
     max-width: none;
@@ -61,10 +54,20 @@ body{
     height: auto;
   }
 }
-
-@media (min-width: 600px) and (max-width: 1200px)  {
+*/
+@media (min-width: 0px) and (max-width: 800px)  {
   .image{
-    float: left;
+    width: 100%;
+  }
+}
+@media (min-width: 801px) and (max-width: 1200px)  {
+  .image{
     width: 50%;
+  }
+}
+
+@media (min-width: 1201px) {
+  .image{
+    width: 25%;
   }
 }

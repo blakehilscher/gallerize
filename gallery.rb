@@ -48,7 +48,7 @@ class Gallery
       <div class="navigation">
         #{navigation}
       </div>
-      <div class="images">
+      <div id="images-container" class="images">
       #{some_images.join("\n")}
       </div>
       <div class="navigation">
@@ -92,12 +92,23 @@ class Gallery
         <meta name="googlebot" content="noindex">
         
         <script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
-        <script type="text/javascript" src="js/jquery.fancybox.js?v=2.1.5"></script>
-        <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css?v=2.1.5" media="screen" />
+        <script type="text/javascript" src="js/jquery.fancybox.js"></script>
+        <script type="text/javascript" src="js/imagesloaded.js"></script>
+        <script type="text/javascript" src="js/jquery.masonry.js"></script>
+        
+        <link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
 
         <script type="text/javascript">
-          $(document).ready(function() {
-             $('.fancybox').fancybox();
+          imagesLoaded( '#images-container', function( instance ) {
+            $('.images').show();
+            $('.fancybox').fancybox();
+            
+            var container = document.querySelector('#images-container');
+            var msnry = new Masonry( container, {
+
+              itemSelector: '.image'
+            });
+            
           });
         </script>
         
