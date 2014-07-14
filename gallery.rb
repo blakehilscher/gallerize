@@ -8,7 +8,7 @@ ROOT = File.expand_path( File.join(__FILE__, '..') )
 
 class Gallery
   
-  PER_PAGE = 4 * 20
+  PER_PAGE = 4 * 25
   TRACKING=''
   IMAGE_TYPES='jpg,JPG,png,PNG'
   OUTPUT_DIR="#{Date.today.strftime('%Y-%m')}-#{File.basename(File.expand_path('.'))}-gallery".downcase.underscore.gsub('_','-')
@@ -73,7 +73,7 @@ class Gallery
       src = %Q{
         <div class="image #{even} #{fourth} #{third} image-#{ticker}">
           <div class="inner-image">
-            <a href="#{image_fullsize}" class="fancybox" rel="group" target="_blank"><img src="#{image_thumbnail}" alt="" /></a>
+            <a href="./#{image_fullsize}" class="fancybox" rel="group" target="_blank"><img src="./#{image_thumbnail}" alt="" /></a>
           </div>
         </div>
       }
@@ -169,9 +169,9 @@ class Gallery
       image.auto_orient
       width,height = image['width'],image['height']
       if width > height
-        image.resize "600x400"
+        image.resize "400x300"
       else
-        image.resize "400x600"
+        image.resize "300x400"
       end
       image.write image_thumbnail
     end

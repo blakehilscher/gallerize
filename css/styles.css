@@ -68,16 +68,3 @@ body{
     width: 50%;
   }
 }
-
-@media (min-width: 1200px) and (max-width: 1800px)  {
-  .image{
-    float: left;
-    width: 33%;
-  }
-  .image-fourth{
-    clear: none;
-  }
-  .image-third{
-    clear: both;
-  }
-}
