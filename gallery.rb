@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'parallel'
 require 'mini_magick'
 require 'pry'
 require 'fileutils'
@@ -21,6 +22,7 @@ class Gallery
       puts "no images found in #{ROOT} matching #{IMAGE_TYPES}"
     else
       reset
+      generate_images
       ticker = 0
       images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(OUTPUT_DIR, 'index.html'))
       images.each_slice(per_page) do |some_images|
@@ -30,6 +32,13 @@ class Gallery
       
     end
   end 
+  
+  def generate_images
+    Parallel.map( Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }, in_processes: 8 ) do |f| 
+      generate_image(f)
+      generate_thumbnail(f)
+    end
+  end
   
   def images_to_html(some_images, ticker=0, name=nil)
     some_images ||= []
@@ -170,7 +179,7 @@ class Gallery
   end
   
   def title
-    File.basename(ROOT).titleize
+    File.basename(File.expand_path('.')).titleize
   end
   
   def reset

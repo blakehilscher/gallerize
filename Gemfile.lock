@@ -14,6 +14,7 @@ GEM
     mini_magick (3.7.0)
       subexec (~> 0.2.1)
     minitest (5.3.5)
+    parallel (1.0.0)
     pry (0.10.0)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -30,4 +31,5 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   mini_magick
+  parallel
   pry
