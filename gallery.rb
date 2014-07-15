@@ -1,17 +1,25 @@
+require 'yaml'
 require 'active_support/all'
 require 'parallel'
 require 'mini_magick'
 require 'pry'
 require 'fileutils'
+require 'exifr'
 
 ROOT = File.expand_path( File.join(__FILE__, '..') )
 
 class Gallery
   
-  PER_PAGE = 4 * 25
-  TRACKING=''
-  IMAGE_TYPES='jpg,JPG,png,PNG'
-  WORKERS=4
+  if File.exists?(File.join(File.expand_path('.'), '.gallery.yml'))
+    CONFIG = YAML.load(File.read(File.join(File.expand_path('.'), '.gallery.yml')))
+  else
+    CONFIG = YAML.load(File.read(File.join(ROOT,'config/global.yml')))
+  end
+  
+  PER_PAGE = CONFIG['per_page']
+  TRACKING = CONFIG['tracking']
+  IMAGE_TYPES = CONFIG['image_types']
+  WORKERS = CONFIG['workers'].to_i
   
   def self.generate
     new.perform
@@ -63,7 +71,13 @@ class Gallery
   
   def images
     ticker = 0
-    @images ||= Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }.collect do |f| 
+    @images ||= Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| 
+      # reject thumbnails
+      f =~ /thumbnail/
+    }.sort_by{|f|
+      # sort by exif date
+      EXIFR::JPEG.new(f).date_time || Time.parse('3000-01-01')
+    }.collect do |f| 
       image_fullsize = generate_image(f)
       image_thumbnail = generate_thumbnail(f)
       
@@ -186,7 +200,7 @@ class Gallery
       if width > height
         image.resize "400x300"
       else
-        image.resize "300x400"
+        image.resize "300x500"
       end
       image.write image_thumbnail
     end
