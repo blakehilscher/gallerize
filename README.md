@@ -1,6 +1,11 @@
 ### Overview
 
-This is a quick and dirty script to generate a static gallery from a set of images.
+Generate a static gallery from a folder of images.
+
+
+### Example
+
+http://examples.hilscher.ca/static-gallery-generator/
 
 
 ### Usage
@@ -27,6 +32,18 @@ bundle install
 ```
 
 * Link bin/gallerize into your PATH
+
+
+### Configuration
+
+* configure in config/global.yml
+
+| Name          | Required?     | Example Value     | Description                                                   |
+| ------------- |:-------------:| -----------------:| -------------------------------------------------------------:|
+| tracking      | optional      | UA-0000000-2      | Enable google analytics by entering a tracking code           |
+| per_page      | required      | 100               | How many photos per page?                                     |
+| image_types   | required      | jpg,JPG,png,PNG   | The image formats to process                                  |
+| workers       | required      | 4                 | The number of processes to use when doing CPU intensive work  |
 
 
 ### Future
