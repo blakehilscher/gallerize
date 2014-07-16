@@ -40,7 +40,7 @@ bundle install
 * Link bin/gallerize into your PATH
 
 ```
-ln -s bin/gallerize /Users/me/bin/gallerize
+ln -sf "$(pwd)/bin/gallerize" $HOME/bin/gallerize
 ```
 
 

@@ -16,6 +16,10 @@ class Gallery
     config = {}
   end
   
+  unless File.exists?(File.join(ROOT,'config/global.yml'))
+    FileUtils.cp(File.join(ROOT,'config/global.yml.example'), File.join(ROOT,'config/global.yml'))
+  end
+  
   CONFIG = YAML.load(File.read(File.join(ROOT,'config/global.yml'))).merge(config)
   
   PER_PAGE = CONFIG['per_page']
