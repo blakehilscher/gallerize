@@ -6,9 +6,11 @@ require 'pry'
 require 'fileutils'
 require 'exifr'
 
-ROOT = File.expand_path( File.join(__FILE__, '..') )
+ROOT = File.expand_path( File.join(__FILE__, '../../') )
 
-class Gallery
+class Gallerize
+  
+  VERSION='0.1.0'
   
   if File.exists?(File.join(File.expand_path('.'), '.gallerize.yml'))
     config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallerize.yml')))
@@ -250,4 +252,4 @@ class Gallery
   
 end
 
-Gallery.generate
+Gallerize.generate
