@@ -1,6 +1,12 @@
 ### Overview
 
-Generate a static gallery from a folder of images.
+Generate a static gallery from a folder of images. 
+
+**Highlights**
+
+* responsive layout
+* thumbnails and fullsize are generated automatically
+* does not alter existing directory
 
 
 ### Example
