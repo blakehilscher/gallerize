@@ -24,29 +24,14 @@ $ gallerize
 
 ### Installation
 
-* Clone or download the repo
-
 ```
-git clone https://github.com/blakehilscher/static-gallery-generator.git
-```
-
-* Install depedencies
-
-```
-cd static-gallery-generator
-bundle install
-```
-
-* Link bin/gallerize into your PATH
-
-```
-ln -sf "$(pwd)/bin/gallerize" $HOME/bin/gallerize
+gem install gallerize-cli
 ```
 
 
 ### Configuration
 
-* configure in config/global.yml
+* create .gallerize.yml in the directory that contains your photos with any of these options:
 
 | Name          | Required?     | Example Value     | Description                                                   |
 | ------------- |:-------------:| -----------------:| -------------------------------------------------------------:|
