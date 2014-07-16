@@ -10,8 +10,8 @@ ROOT = File.expand_path( File.join(__FILE__, '..') )
 
 class Gallery
   
-  if File.exists?(File.join(File.expand_path('.'), '.gallery.yml'))
-    config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallery.yml')))
+  if File.exists?(File.join(File.expand_path('.'), '.gallerize.yml'))
+    config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallerize.yml')))
   else
     config = {}
   end
@@ -76,6 +76,13 @@ class Gallery
     @images ||= Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| 
       # reject thumbnails
       f =~ /thumbnail/
+    }.reject{|f| 
+      begin
+        EXIFR::JPEG.new(f).date_time
+        false
+      rescue
+        true
+      end
     }.sort_by{|f|
       # sort by exif date
       EXIFR::JPEG.new(f).date_time || Time.parse('3000-01-01')
@@ -179,9 +186,9 @@ class Gallery
       image.auto_orient
       width,height = image['width'],image['height']
       if width > height
-        image.resize "1200x800"
+        image.resize "#{CONFIG['image_width']}x#{CONFIG['image_height']}"
       else
-        image.resize "800x1200"
+        image.resize "#{CONFIG['image_height']}x#{CONFIG['image_width']}"
       end
       image.write image_output
     end
@@ -200,9 +207,9 @@ class Gallery
       image.auto_orient
       width,height = image['width'],image['height']
       if width > height
-        image.resize "400x300"
+        image.resize "#{CONFIG['thumb_width']}x#{CONFIG['thumb_height']}"
       else
-        image.resize "300x500"
+        image.resize "#{CONFIG['thumb_height']}x#{CONFIG['thumb_width'].to_i * 1.25}"
       end
       image.write image_thumbnail
     end

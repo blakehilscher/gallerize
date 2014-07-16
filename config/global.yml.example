@@ -1,1 +1,8 @@
 tracking: UA-000000000-0
+per_page: 100
+image_types: 'jpg,JPG,png,PNG'
+workers: 7
+image_width: 1200
+image_height: 800
+thumb_width: 400
+thumb_height: 300
