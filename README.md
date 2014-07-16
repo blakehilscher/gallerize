@@ -1,6 +1,6 @@
 ### Example
 
-http://examples.hilscher.ca/static-gallery-generator/
+http://examples.hilscher.ca/gallerize/
 
 
 ### Overview
