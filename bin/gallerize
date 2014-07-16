@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 
-require_relative '../gallery.rb'
+require_relative '../lib/gallerize.rb'
