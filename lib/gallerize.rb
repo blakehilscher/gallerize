@@ -10,7 +10,7 @@ ROOT = File.expand_path( File.join(__FILE__, '../../') )
 
 class Gallerize
   
-  VERSION='0.1.0'
+  VERSION='0.1.1'
   
   if File.exists?(File.join(File.expand_path('.'), '.gallerize.yml'))
     config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallerize.yml')))
@@ -35,7 +35,7 @@ class Gallerize
   
   def perform
     if Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }.blank?
-      puts "no images found in #{ROOT} matching #{IMAGE_TYPES}"
+      puts "no images found in #{File.expand_path('.')} matching #{IMAGE_TYPES}"
     else
       reset
       generate_images

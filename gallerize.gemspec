@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "gallerize"
 
 Gem::Specification.new do |s|
-  s.name        = "gallerize"
+  s.name        = "gallerize-cli"
   s.version     = Gallerize::VERSION
   s.authors     = ["Blake Hilscher"]
   s.email       = ["blake@hilscher.ca"]
