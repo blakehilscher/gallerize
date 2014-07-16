@@ -221,6 +221,7 @@ class Gallery
   end
   
   def output_dir
+    return CONFIG['output_name'] if CONFIG['output_name'].present?
     dir = File.basename(File.expand_path('.'))
     dir = "#{Date.today.strftime('%Y-%m')}-#{dir}" unless dir =~ /^[0-9]{4}/
     dir = dir.downcase.underscore.gsub('_','-')
