@@ -54,6 +54,10 @@ ln -s bin/gallerize /Users/me/bin/gallerize
 | per_page      | required      | 100               | How many photos per page?                                     |
 | image_types   | required      | jpg,JPG,png,PNG   | The image formats to process                                  |
 | workers       | required      | 4                 | The number of processes to use when doing CPU intensive work  |
+| image_width   | required      | 1200              | The fullsize image width                                      |
+| image_height  | required      | 800               | The fullsize image height                                     |
+| thumb_width   | required      | 1200              | The thumbnail image width                                     |
+| thumb_height  | required      | 800               | The thumbnail image height                                    |
 
 
 ### Future

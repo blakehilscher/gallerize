@@ -181,7 +181,7 @@ class Gallery
     image_output = File.join(output_dir, 'images', image_path.downcase)
     
     unless File.exists?(image_output)
-      puts "generate_image 1200x800 #{image_output}"
+      puts "generate_image #{CONFIG['image_width']}x#{CONFIG['image_height']} #{image_output}"
       image = MiniMagick::Image.open(image_path)
       image.auto_orient
       width,height = image['width'],image['height']
@@ -202,7 +202,7 @@ class Gallery
     image_thumbnail = File.join(output_dir, 'images', "#{image_basename}-thumbnail.#{image_ext}")
     
     unless File.exists?(image_thumbnail)
-      puts "generate_thumbnail 400x260 #{image_thumbnail}"
+      puts "generate_thumbnail #{CONFIG['thumb_width']}x#{CONFIG['thumb_height']} #{image_thumbnail}"
       image = MiniMagick::Image.open(f)
       image.auto_orient
       width,height = image['width'],image['height']
