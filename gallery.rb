@@ -11,10 +11,12 @@ ROOT = File.expand_path( File.join(__FILE__, '..') )
 class Gallery
   
   if File.exists?(File.join(File.expand_path('.'), '.gallery.yml'))
-    CONFIG = YAML.load(File.read(File.join(File.expand_path('.'), '.gallery.yml')))
+    config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallery.yml')))
   else
-    CONFIG = YAML.load(File.read(File.join(ROOT,'config/global.yml')))
+    config = {}
   end
+  
+  CONFIG = YAML.load(File.read(File.join(ROOT,'config/global.yml'))).merge(config)
   
   PER_PAGE = CONFIG['per_page']
   TRACKING = CONFIG['tracking']
