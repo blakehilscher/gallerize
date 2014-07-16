@@ -1,25 +1,14 @@
-### Overview
-
-Generate a static gallery from a folder of images. 
-
-**Highlights**
-
-* responsive layout
-* thumbnails and fullsize are generated automatically
-* does not alter existing directory
-
-
 ### Example
 
 http://examples.hilscher.ca/static-gallery-generator/
 
 
-### Usage
+### Overview
 
-```
-$ cd folder-with-pictures
-$ gallerize
-```
+* generate a static gallery from a folder of images
+* responsive layout
+* thumbnails and fullsize are generated automatically
+* does not alter existing directory
 
 
 ### Installation
@@ -29,9 +18,18 @@ gem install gallerize-cli
 ```
 
 
+### Usage
+
+```
+$ cd folder-with-pictures
+$ gallerize
+$ open static-gallery/index.html
+```
+
+
 ### Configuration
 
-* create .gallerize.yml in the directory that contains your photos with any of these options:
+Create .gallerize.yml in the directory that contains your photos with any of these options:
 
 | Name          | Required?     | Example Value     | Description                                                   |
 | ------------- |:-------------:| -----------------:| -------------------------------------------------------------:|
