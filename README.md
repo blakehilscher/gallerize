@@ -50,7 +50,6 @@ ln -s bin/gallerize /Users/me/bin/gallerize
 
 | Name          | Required?     | Example Value     | Description                                                   |
 | ------------- |:-------------:| -----------------:| -------------------------------------------------------------:|
-| tracking      | optional      | UA-0000000-2      | Enable google analytics by entering a tracking code           |
 | per_page      | required      | 100               | How many photos per page?                                     |
 | image_types   | required      | jpg,JPG,png,PNG   | The image formats to process                                  |
 | workers       | required      | 4                 | The number of processes to use when doing CPU intensive work  |
@@ -58,6 +57,8 @@ ln -s bin/gallerize /Users/me/bin/gallerize
 | image_height  | required      | 800               | The fullsize image height                                     |
 | thumb_width   | required      | 1200              | The thumbnail image width                                     |
 | thumb_height  | required      | 800               | The thumbnail image height                                    |
+| output_name   | optional      | gallery           | Directory name where the gallery will be created              |
+| tracking      | optional      | UA-0000000-2      | Enable google analytics by entering a tracking code           |
 
 
 ### Future
