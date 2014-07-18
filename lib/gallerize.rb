@@ -1,4 +1,5 @@
 require 'yaml'
+require 'ostruct'
 require 'active_support/all'
 require 'parallel'
 require 'mini_magick'
@@ -10,50 +11,56 @@ ROOT = File.expand_path( File.join(__FILE__, '../../') )
 
 class Gallerize
   
+  attr_accessor :image_paths
+  
   VERSION='0.1.1'
-  
-  if File.exists?(File.join(File.expand_path('.'), '.gallerize.yml'))
-    config = YAML.load(File.read(File.join(File.expand_path('.'), '.gallerize.yml')))
-  else
-    config = {}
-  end
-  
-  unless File.exists?(File.join(ROOT,'config/global.yml'))
-    FileUtils.cp(File.join(ROOT,'config/global.yml.example'), File.join(ROOT,'config/global.yml'))
-  end
-  
-  CONFIG = YAML.load(File.read(File.join(ROOT,'config/global.yml'))).merge(config)
-  
-  PER_PAGE = CONFIG['per_page']
-  TRACKING = CONFIG['tracking']
-  IMAGE_TYPES = CONFIG['image_types']
-  WORKERS = CONFIG['workers'].to_i
   
   def self.generate
     new.perform
   end
   
   def perform
-    if Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }.blank?
-      puts "no images found in #{File.expand_path('.')} matching #{IMAGE_TYPES}"
+    if Dir.glob("*.{#{config.image_types}}").reject{|f| f =~ /thumbnail/ }.blank?
+      puts "no images found in #{File.expand_path('.')} matching #{config.image_types}"
     else
-      reset
+      prepare_output_directory
       generate_images
+      binding.pry
       ticker = 0
       images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(output_dir, 'index.html'))
       images.each_slice(per_page) do |some_images|
         images_to_html(some_images, ticker)
         ticker = ticker + 1
       end
-      
     end
   end 
   
+  def prepare_output_directory
+    # remove html files
+    Dir.glob( output.html_files ){|f| FileUtils.rm(f) }
+    # ensure output directory
+    FileUtils.mkdir( output.root ) unless File.exists?( output.root )
+    # ensure output/images directory
+    FileUtils.mkdir( output.images ) unless File.exists?( output.images )
+    # copy css and js from gem to output
+    output.copy_from_gem_source( 'css', 'js' )
+  end
+  
   def generate_images
-    Parallel.map( Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| f =~ /thumbnail/ }, in_processes: WORKERS ) do |f| 
-      generate_image(f)
-      generate_thumbnail(f)
+    generated = []
+    # generate images and skip any that fail
+    Parallel.map( image_paths, in_processes: config.workers.to_i ) do |f|
+      begin
+        generate_image(f)
+        generate_thumbnail(f)
+        generated << f
+      rescue
+        # if any error occurs while processing the image, skip it
+        puts "failed to process, skipping: #{f}"
+        nil
+      end
     end
+    generated
   end
   
   def images_to_html(some_images, ticker=0, name=nil)
@@ -79,23 +86,9 @@ class Gallerize
   
   def images
     ticker = 0
-    @images ||= Dir.glob("*.{#{IMAGE_TYPES}}").reject{|f| 
-      # reject thumbnails
-      f =~ /thumbnail/
-    }.reject{|f| 
-      begin
-        EXIFR::JPEG.new(f).date_time
-        false
-      rescue
-        true
-      end
-    }.sort_by{|f|
-      # sort by exif date
-      EXIFR::JPEG.new(f).date_time || Time.parse('3000-01-01')
-    }.collect do |f| 
+    image_paths.collect do |f| 
       image_fullsize = generate_image(f)
       image_thumbnail = generate_thumbnail(f)
-      
       even = (ticker % 2 == 0) ? 'image-even' : 'image-odd'
       third = (ticker % 3 == 0) ? 'image-third' : ''
       fourth = (ticker % 4 == 0) ? 'image-fourth' : ''
@@ -109,6 +102,23 @@ class Gallerize
       ticker = ticker + 1
       src
     end
+  end
+  
+  def image_paths
+    @image_paths ||= Dir.glob("*.{#{config.image_types}}").reject{|f| 
+      # reject thumbnails
+      f =~ /thumbnail/
+    }.reject{|f| 
+      begin
+        EXIFR::JPEG.new(f).date_time
+        false
+      rescue
+        true
+      end
+    }.sort_by{|f|
+      # sort by exif date
+      EXIFR::JPEG.new(f).date_time || Time.parse('3000-01-01')
+    }
   end
   
   def body
@@ -163,11 +173,11 @@ class Gallerize
   end
   
   def per_page
-    PER_PAGE
+    config.per_page
   end
   
   def tracking_js
-    return if TRACKING == ''
+    return if config.tracking.blank?
     %Q{
       <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -175,7 +185,7 @@ class Gallerize
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        ga('create', '#{TRACKING}', 'auto');
+        ga('create', '#{config.tracking}', 'auto');
         ga('send', 'pageview');
 
       </script>
@@ -183,43 +193,44 @@ class Gallerize
   end
   
   def generate_image(image_path)
-    
-    image_output = File.join(output_dir, 'images', image_path.downcase)
-    
-    unless File.exists?(image_output)
-      puts "generate_image #{CONFIG['image_width']}x#{CONFIG['image_height']} #{image_output}"
-      image = MiniMagick::Image.open(image_path)
-      image.auto_orient
-      width,height = image['width'],image['height']
-      if width > height
-        image.resize "#{CONFIG['image_width']}x#{CONFIG['image_height']}"
-      else
-        image.resize "#{CONFIG['image_height']}x#{CONFIG['image_width']}"
-      end
-      image.write image_output
-    end
-    image_output.gsub(output_dir, '')
+    image = extract_image_extension(source_path)
+    output_path = File.join(output.images, "#{image[:basename]}.#{image[:extension]}")
+    # generate the thumbnail
+    generate_image(source_path, output_path, config.image_width, config.image_height)
   end
   
-  def generate_thumbnail(f)
-    image_basename = f.downcase.split(".")
-    image_ext = image_basename.pop
-    image_basename = image_basename.join('.')
-    image_thumbnail = File.join(output_dir, 'images', "#{image_basename}-thumbnail.#{image_ext}")
-    
-    unless File.exists?(image_thumbnail)
-      puts "generate_thumbnail #{CONFIG['thumb_width']}x#{CONFIG['thumb_height']} #{image_thumbnail}"
-      image = MiniMagick::Image.open(f)
+  def generate_thumbnail(source_path)
+    image = extract_image_extension(source_path)
+    output_path = File.join(output.images, "#{image[:basename]}-thumbnail.#{image[:extension]}")
+    # generate the thumbnail
+    generate_image(source_path, output_path, config.thumb_width, config.thumb_height)
+  end
+  
+  def generate_image(source_path, output_path, width, height)
+    # ensure correct types
+    width, height = width.to_i, height.to_i
+    # skip if image exists
+    unless File.exists?(output_path)
+      puts "generate_image #{source_path} #{output_path} #{width} #{height}"
+      image = MiniMagick::Image.open(source_path)
       image.auto_orient
-      width,height = image['width'],image['height']
-      if width > height
-        image.resize "#{CONFIG['thumb_width']}x#{CONFIG['thumb_height']}"
+      # landscape?
+      if image['width'] > image['height']
+        image.resize "#{width}x#{height}"
       else
-        image.resize "#{CONFIG['thumb_height']}x#{CONFIG['thumb_width'].to_i * 1.25}"
+        image.resize "#{height}x#{width.to_i * 1.25}"
       end
-      image.write image_thumbnail
+      image.write output_path
     end
-    image_thumbnail.gsub(output_dir, '')
+    # strip the output.root from the path so that the returned path is relative
+    output_path.gsub( output.root, '' )
+  end
+  
+  def extract_image_extension(image_path, suffix)
+    basename = image_path.split(".")
+    extension = basename.pop.downcase
+    basename = basename.join('.')
+    return { basename: basename, extension: extension }
   end
   
   def title
@@ -227,18 +238,10 @@ class Gallerize
   end
   
   def output_dir
-    return CONFIG['output_name'] if CONFIG['output_name'].present?
-    dir = File.basename(File.expand_path('.'))
-    dir = "#{Date.today.strftime('%Y-%m')}-#{dir}" unless dir =~ /^[0-9]{4}/
-    dir = dir.downcase.underscore.gsub('_','-')
-    dir
   end
   
-  def reset
-    Dir.glob(File.join(output_dir, '*.html')){|f| FileUtils.rm(f) }
-    FileUtils.mkdir(output_dir) unless File.exists?(output_dir)
-    FileUtils.mkdir(File.join(output_dir,'images')) unless File.exists?(File.join(output_dir,'images'))
-    copy('css', 'js')
+  def output
+    @output ||= OutputDir.new( config.output_name )
   end
   
   def copy(*folders)
@@ -248,6 +251,72 @@ class Gallerize
       FileUtils.rm_rf( outdir )
       FileUtils.cp_r( File.join( ROOT, folder ), outdir )
     end
+  end
+  
+  def config
+    @config ||= load_config
+  end
+  
+  def load_config
+    config = {}
+    # load config from output directory if present
+    config = YAML.load( File.read( source_dir.config ) ) if source_dir.config?
+    # generate global config from example if missing
+    global_config = File.join(ROOT,'config/global.yml')
+    FileUtils.cp( "#{global_config}.example", global_config ) unless File.exists?( global_config )
+    # load global_config and merge with source config
+    OpenStruct.new(YAML.load(File.read(global_config)).merge(config))
+  end
+  
+  def source_dir
+    @source_dir ||= SourceDir.new
+  end
+  
+  class SourceDir
+    
+    def config?
+      File.exists?(config)
+    end
+    
+    def config
+      File.join( root, '.gallery.yml')
+    end
+    
+    def root
+      @root ||= File.expand_path('.')
+    end
+    
+  end
+  
+  class OutputDir
+    
+    attr_accessor :root
+    
+    def initialize(path)
+      self.root = path
+    end
+    
+    def root=(value)
+      @root = File.join( File.expand_path('.'), (value || 'static-gallery') )
+    end
+    
+    def images
+      File.join( root, 'images' )
+    end
+    
+    def html_files
+      File.join( root, '*.html')
+    end
+    
+    def copy_from_gem_source(*folders)
+      folders.each do |folder|
+        outdir = File.join( root, folder )
+        FileUtils.rm_rf( outdir )
+        FileUtils.cp_r( File.join( ROOT, folder ), outdir )
+      end
+    end
+  
+    
   end
   
 end

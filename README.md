@@ -38,8 +38,8 @@ Create .gallerize.yml in the directory that contains your photos with any of the
 | workers       | required      | 4                 | The number of processes to use when doing CPU intensive work  |
 | image_width   | required      | 1200              | The fullsize image width                                      |
 | image_height  | required      | 800               | The fullsize image height                                     |
-| thumb_width   | required      | 1200              | The thumbnail image width                                     |
-| thumb_height  | required      | 800               | The thumbnail image height                                    |
+| thumb_width   | required      | 400               | The thumbnail image width                                     |
+| thumb_height  | required      | 300               | The thumbnail image height                                    |
 | output_name   | optional      | gallery           | Directory name where the gallery will be created              |
 | tracking      | optional      | UA-0000000-2      | Enable google analytics by entering a tracking code           |
 
