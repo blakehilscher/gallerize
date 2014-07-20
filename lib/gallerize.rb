@@ -42,7 +42,7 @@ class Gallerize
     # ensure output/images directory
     FileUtils.mkdir( output_dir.images ) unless File.exists?( output_dir.images )
     # copy css and js from gem to output
-    output_dir.copy_from_gem_source( 'css', 'js' )
+    output_dir.copy_from_gem_source( 'assets/css', 'assets/js' )
   end
   
   def generate_images
@@ -126,13 +126,13 @@ class Gallerize
         <meta name="robots" content="noindex">
         <meta name="googlebot" content="noindex">
         
-        <script type="text/javascript" src="js/jquery-1.10.1.min.js"></script>
-        <script type="text/javascript" src="js/jquery.fancybox.js"></script>
-        <script type="text/javascript" src="js/imagesloaded.js"></script>
-        <script type="text/javascript" src="js/jquery.masonry.js"></script>
+        <script type="text/javascript" src="assets/js/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="assets/js/jquery.fancybox.js"></script>
+        <script type="text/javascript" src="assets/js/imagesloaded.js"></script>
+        <script type="text/javascript" src="assets/js/jquery.masonry.js"></script>
         
-        <link rel="stylesheet" type="text/css" href="css/styles.css" media="screen" />
-        <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="assets/css/styles.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="assets/css/jquery.fancybox.css" media="screen" />
         <meta name="viewport" content="width=device-width, user-scalable=no">
         
         <script type="text/javascript">
@@ -303,6 +303,7 @@ class Gallerize
         outdir = File.join( root, folder )
         puts "copy ./#{folder} #{outdir}"
         FileUtils.rm_rf( outdir )
+        FileUtils.mkdir_p( File.expand_path(File.join(outdir, '..')) )
         FileUtils.cp_r( File.join( ROOT, folder ), outdir )
       end
     end
