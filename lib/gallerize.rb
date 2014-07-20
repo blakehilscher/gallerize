@@ -6,6 +6,7 @@ require 'mini_magick'
 require 'pry'
 require 'fileutils'
 require 'exifr'
+require 'erb'
 
 require 'gallerize/output_dir'
 require 'gallerize/source_dir'
@@ -69,15 +70,10 @@ class Gallerize
     some_images ||= []
     navigation = (images.count / per_page.to_f).ceil.times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">#{r}</a>} }.join("\n")
     navigation = (images.count > some_images.count) ? %Q{<div class="navigation">#{navigation}</div>} : ""
-    html = %Q{
-      #{body}
-      #{navigation}
-      <div id="images-container" class="images">
-      #{some_images.join("\n")}
-      </div>
-      #{navigation}
-      #{footer}
-    }
+    
+    template = ERB.new(File.read(File.join(ROOT, 'templates/layout.html.erb')))
+    html = template.result(binding)
+    
     name ||= output_dir.html_file("images-#{ticker}")
     puts "generate #{name.gsub(output_dir.root, output_dir.relative_root)}"
     File.write(name, html)
@@ -120,75 +116,8 @@ class Gallerize
     }
   end
   
-  def body
-    %Q{
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-        <head>
-        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-        <meta name="robots" content="noindex">
-        <meta name="googlebot" content="noindex">
-        
-        <script type="text/javascript" src="assets/js/jquery-1.10.1.min.js"></script>
-        <script type="text/javascript" src="assets/js/jquery.fancybox.js"></script>
-        <script type="text/javascript" src="assets/js/imagesloaded.js"></script>
-        <script type="text/javascript" src="assets/js/jquery.masonry.js"></script>
-        
-        <link rel="stylesheet" type="text/css" href="assets/css/styles.css" media="screen" />
-        <link rel="stylesheet" type="text/css" href="assets/css/jquery.fancybox.css" media="screen" />
-        <meta name="viewport" content="width=device-width, user-scalable=no">
-        
-        <script type="text/javascript">
-          $(document).ready(function(){
-            $('#images-container').imagesLoaded( function() {
-              $('.images').show();
-            
-              var container = document.querySelector('#images-container');
-              var msnry = new Masonry( container, {
-
-                itemSelector: '.image'
-              });
-
-              $('.fancybox').fancybox();
-            });
-          });
-        </script>
-        
-        #{tracking_js}
-        
-        <title>#{title}</title>
-        <link rel="stylesheet" href="css/styles.css" />
-        </head>
-        <body>
-        <h1 class="page-title">#{title}</h1>
-      }
-  end
-  
-  def footer
-    %Q{
-      </body>
-      </html>
-    }
-  end
-  
   def per_page
     config.per_page
-  end
-  
-  def tracking_js
-    return if config.tracking.blank?
-    %Q{
-      <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', '#{config.tracking}', 'auto');
-        ga('send', 'pageview');
-
-      </script>
-    }
   end
   
   def generate_fullsize(source_path)
