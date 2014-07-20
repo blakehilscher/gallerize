@@ -23,13 +23,13 @@ gem install gallerize-cli
 ```
 $ cd folder-with-pictures
 $ gallerize
-$ open static-gallery/index.html
+$ open gallerize/index.html
 ```
 
 
 ### Configuration
 
-Create .gallerize.yml in the directory that contains your photos with any of these options:
+Create .gallerize in the directory that contains your photos with any of these options:
 
 | Name          | Required?     | Example Value     | Description                                                   |
 | ------------- |:-------------:| -----------------:| -------------------------------------------------------------:|

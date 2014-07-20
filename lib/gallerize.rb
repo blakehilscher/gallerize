@@ -20,14 +20,13 @@ class Gallerize
   end
   
   def perform
-    if Dir.glob("*.{#{config.image_types}}").reject{|f| f =~ /thumbnail/ }.blank?
-      puts "no images found in #{File.expand_path('.')} matching #{config.image_types}"
+    if image_paths.blank?
+      puts "no images found in #{source_dir.root} matching #{config.image_types}"
     else
       prepare_output_directory
       generate_images
-      binding.pry
       ticker = 0
-      images_to_html(images.each_slice(per_page).to_a.first, 0, File.join(output_dir, 'index.html'))
+      images_to_html(images.each_slice(config.per_page).to_a.first, 0, output_dir.html_file(:index) )
       images.each_slice(per_page) do |some_images|
         images_to_html(some_images, ticker)
         ticker = ticker + 1
@@ -37,13 +36,13 @@ class Gallerize
   
   def prepare_output_directory
     # remove html files
-    Dir.glob( output.html_files ){|f| FileUtils.rm(f) }
+    Dir.glob( output_dir.html_files ){|f| FileUtils.rm(f) }
     # ensure output directory
-    FileUtils.mkdir( output.root ) unless File.exists?( output.root )
+    FileUtils.mkdir( output_dir.root ) unless File.exists?( output_dir.root )
     # ensure output/images directory
-    FileUtils.mkdir( output.images ) unless File.exists?( output.images )
+    FileUtils.mkdir( output_dir.images ) unless File.exists?( output_dir.images )
     # copy css and js from gem to output
-    output.copy_from_gem_source( 'css', 'js' )
+    output_dir.copy_from_gem_source( 'css', 'js' )
   end
   
   def generate_images
@@ -51,12 +50,12 @@ class Gallerize
     # generate images and skip any that fail
     Parallel.map( image_paths, in_processes: config.workers.to_i ) do |f|
       begin
-        generate_image(f)
+        generate_fullsize(f)
         generate_thumbnail(f)
         generated << f
-      rescue
+      rescue => e
         # if any error occurs while processing the image, skip it
-        puts "failed to process, skipping: #{f}"
+        puts "failed to process #{f}. error: #{e} #{e.backtrace.first}"
         nil
       end
     end
@@ -66,20 +65,17 @@ class Gallerize
   def images_to_html(some_images, ticker=0, name=nil)
     some_images ||= []
     navigation = (images.count / per_page.to_f).ceil.times.collect{|r| %Q{<a class="#{'active' if r == ticker}" href="images-#{r}.html">#{r}</a>} }.join("\n")
+    navigation = (images.count > some_images.count) ? %Q{<div class="navigation">#{navigation}</div>} : ""
     html = %Q{
       #{body}
-      <div class="navigation">
-        #{navigation}
-      </div>
+      #{navigation}
       <div id="images-container" class="images">
       #{some_images.join("\n")}
       </div>
-      <div class="navigation">
-        #{navigation}
-      </div>
+      #{navigation}
       #{footer}
     }
-    name ||= File.join( output_dir, "images-#{ticker}.html" )
+    name ||= output_dir.html_file("images-#{ticker}")
     puts "generate #{name}"
     File.write(name, html)
   end
@@ -87,7 +83,7 @@ class Gallerize
   def images
     ticker = 0
     image_paths.collect do |f| 
-      image_fullsize = generate_image(f)
+      image_fullsize = generate_fullsize(f)
       image_thumbnail = generate_thumbnail(f)
       even = (ticker % 2 == 0) ? 'image-even' : 'image-odd'
       third = (ticker % 3 == 0) ? 'image-third' : ''
@@ -192,16 +188,16 @@ class Gallerize
     }
   end
   
-  def generate_image(image_path)
+  def generate_fullsize(source_path)
     image = extract_image_extension(source_path)
-    output_path = File.join(output.images, "#{image[:basename]}.#{image[:extension]}")
+    output_path = File.join(output_dir.images, "#{image[:basename]}.#{image[:extension]}")
     # generate the thumbnail
     generate_image(source_path, output_path, config.image_width, config.image_height)
   end
   
   def generate_thumbnail(source_path)
     image = extract_image_extension(source_path)
-    output_path = File.join(output.images, "#{image[:basename]}-thumbnail.#{image[:extension]}")
+    output_path = File.join(output_dir.images, "#{image[:basename]}-thumbnail.#{image[:extension]}")
     # generate the thumbnail
     generate_image(source_path, output_path, config.thumb_width, config.thumb_height)
   end
@@ -211,7 +207,7 @@ class Gallerize
     width, height = width.to_i, height.to_i
     # skip if image exists
     unless File.exists?(output_path)
-      puts "generate_image #{source_path} #{output_path} #{width} #{height}"
+      puts "generate_image #{File.basename(source_path)} #{File.basename(output_path)} #{width} #{height}"
       image = MiniMagick::Image.open(source_path)
       image.auto_orient
       # landscape?
@@ -222,11 +218,11 @@ class Gallerize
       end
       image.write output_path
     end
-    # strip the output.root from the path so that the returned path is relative
-    output_path.gsub( output.root, '' )
+    # strip the output_dir.root from the path so that the returned path is relative
+    output_path.gsub( output_dir.root, '' )
   end
   
-  def extract_image_extension(image_path, suffix)
+  def extract_image_extension(image_path)
     basename = image_path.split(".")
     extension = basename.pop.downcase
     basename = basename.join('.')
@@ -238,19 +234,7 @@ class Gallerize
   end
   
   def output_dir
-  end
-  
-  def output
-    @output ||= OutputDir.new( config.output_name )
-  end
-  
-  def copy(*folders)
-    folders.each do |folder|
-      outdir = File.join( output_dir, folder )
-      puts "copy #{File.join( ROOT, folder )} #{outdir}"
-      FileUtils.rm_rf( outdir )
-      FileUtils.cp_r( File.join( ROOT, folder ), outdir )
-    end
+    @output_dir ||= OutputDir.new( config.output_name )
   end
   
   def config
@@ -279,7 +263,7 @@ class Gallerize
     end
     
     def config
-      File.join( root, '.gallery.yml')
+      File.join( root, '.gallerize')
     end
     
     def root
@@ -297,7 +281,13 @@ class Gallerize
     end
     
     def root=(value)
-      @root = File.join( File.expand_path('.'), (value || 'static-gallery') )
+      @root = File.join( File.expand_path('.'), (value || 'gallerize') )
+    end
+    
+    def html_file(name)
+      name = name.to_s
+      name = "#{name}.html" unless name =~ /\.html/
+      File.join(root, name)
     end
     
     def images
@@ -311,6 +301,7 @@ class Gallerize
     def copy_from_gem_source(*folders)
       folders.each do |folder|
         outdir = File.join( root, folder )
+        puts "copy ./#{folder} #{outdir}"
         FileUtils.rm_rf( outdir )
         FileUtils.cp_r( File.join( ROOT, folder ), outdir )
       end
