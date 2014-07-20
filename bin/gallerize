@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
+require "pathname"
 
-require_relative '../lib/gallerize.rb'
+bin_file = Pathname.new(__FILE__).realpath
+$:.unshift File.expand_path("../../lib", bin_file)
+
+require 'gallerize'

@@ -7,6 +7,9 @@ require 'pry'
 require 'fileutils'
 require 'exifr'
 
+require 'gallerize/output_dir'
+require 'gallerize/source_dir'
+
 ROOT = File.expand_path( File.join(__FILE__, '../../') )
 
 class Gallerize
@@ -76,7 +79,7 @@ class Gallerize
       #{footer}
     }
     name ||= output_dir.html_file("images-#{ticker}")
-    puts "generate #{name}"
+    puts "generate #{name.gsub(output_dir.root, output_dir.relative_root)}"
     File.write(name, html)
   end
   
@@ -254,61 +257,6 @@ class Gallerize
   
   def source_dir
     @source_dir ||= SourceDir.new
-  end
-  
-  class SourceDir
-    
-    def config?
-      File.exists?(config)
-    end
-    
-    def config
-      File.join( root, '.gallerize')
-    end
-    
-    def root
-      @root ||= File.expand_path('.')
-    end
-    
-  end
-  
-  class OutputDir
-    
-    attr_accessor :root
-    
-    def initialize(path)
-      self.root = path
-    end
-    
-    def root=(value)
-      @root = File.join( File.expand_path('.'), (value || 'gallerize') )
-    end
-    
-    def html_file(name)
-      name = name.to_s
-      name = "#{name}.html" unless name =~ /\.html/
-      File.join(root, name)
-    end
-    
-    def images
-      File.join( root, 'images' )
-    end
-    
-    def html_files
-      File.join( root, '*.html')
-    end
-    
-    def copy_from_gem_source(*folders)
-      folders.each do |folder|
-        outdir = File.join( root, folder )
-        puts "copy ./#{folder} #{outdir}"
-        FileUtils.rm_rf( outdir )
-        FileUtils.mkdir_p( File.expand_path(File.join(outdir, '..')) )
-        FileUtils.cp_r( File.join( ROOT, folder ), outdir )
-      end
-    end
-  
-    
   end
   
 end
