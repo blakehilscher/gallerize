@@ -4,32 +4,32 @@
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
   <meta name="robots" content="noindex">
   <meta name="googlebot" content="noindex">
-        
+
   <script type="text/javascript" src="assets/js/jquery-1.10.1.min.js"></script>
   <script type="text/javascript" src="assets/js/jquery.fancybox.js"></script>
   <script type="text/javascript" src="assets/js/imagesloaded.js"></script>
   <script type="text/javascript" src="assets/js/jquery.masonry.js"></script>
-        
+
   <link rel="stylesheet" type="text/css" href="assets/css/styles.css" media="screen" />
   <link rel="stylesheet" type="text/css" href="assets/css/jquery.fancybox.css" media="screen" />
   <meta name="viewport" content="width=device-width, user-scalable=no">
-        
+
   <script type="text/javascript">
   $(document).ready(function(){
     $('#images-container').imagesLoaded( function() {
       $('.images').show();
-            
+
       var container = document.querySelector('#images-container');
       var msnry = new Masonry( container, {
 
         itemSelector: '.image'
       });
 
-      $('.fancybox').fancybox();
+      $('.fancybox').fancybox(<%= fancybox_options %>);
     });
   });
   </script>
-        
+
   <% if config.tracking.present? %>
     <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -42,18 +42,18 @@
 
     </script>
   <% end %>
-        
+
   <title><%= title %></title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <h1 class="page-title"><%= title %></h1>
-  
+
   <%= navigation %>
   <div id="images-container" class="images">
     <%= some_images.join("\n") %>
   </div>
   <%= navigation %>
-  
+
 </body>
 </html>

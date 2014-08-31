@@ -7,3 +7,4 @@ image_height: 800
 thumb_width: 400
 thumb_height: 300
 output_name: gallerize
+titles: false
