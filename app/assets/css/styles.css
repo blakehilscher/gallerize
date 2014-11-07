@@ -1,0 +1,76 @@
+body{
+  font-family: arial;
+}
+.images{
+  overflow: hidden;
+  display:none;
+}
+.inner-image{
+  margin: 5px;
+  overflow:hidden;
+  background-color: #f2f2f2;
+}
+.image img{
+  width: 100%;
+}
+.navigation{
+  overflow: auto;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+.navigation .active,
+.navigation a:hover{
+  background-color: #901414;
+  color: #fff;
+}
+.navigation a{
+  float: left;
+  display: inline-block;
+  text-decoration: none;
+  padding: 7px 10px 5px;
+  
+  background: #ddd;
+  margin-right: 2px;
+  margin-bottom: 2px;
+  
+  color: #901414;
+  font-weight: bold;
+}
+.page-title{
+  margin: 20px 5px 5px 5px;
+  color: #901414;
+}
+
+@media (min-width: 0px) and (max-width: 500px)  {
+  .image{
+    width: 100%;
+  }
+}
+@media (min-width: 501px) and (max-width: 1000px)  {
+  .image{
+    width: 50%;
+  }
+}
+@media (min-width: 1001px) and (max-width: 1600px)  {
+  .image{
+    width: 25%;
+  }
+}
+@media (min-width: 1601px) and (max-width: 2000px)  {
+  .image{
+    width: 20%;
+  }
+}
+
+@media (min-width: 2001px) and (max-width: 2800px)  {
+  .image{
+    width: 15%;
+  }
+}
+
+@media (min-width: 2801px) {
+  .image{
+    width: 10%;
+  }
+}

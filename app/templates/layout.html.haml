@@ -1,3 +1,26 @@
-- images.each do |image|
-  .image
-    %img{src: image.thumb_url }
+!!!
+%html{"xml:lang" => "en", :xmlns => "http://www.w3.org/1999/xhtml"}
+  %head
+    %meta{:content => "text/html;charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:content => "noindex", :name => "robots"}/
+    %meta{:content => "noindex", :name => "googlebot"}/
+
+    %script{:src => "assets/js/jquery-1.10.1.min.js", :type => "text/javascript"}
+    %script{:src => "assets/js/jquery.fancybox.js", :type => "text/javascript"}
+    %script{:src => "assets/js/imagesloaded.js", :type => "text/javascript"}
+    %script{:src => "assets/js/jquery.masonry.js", :type => "text/javascript"}
+
+    %link{:href => "assets/css/styles.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "assets/css/jquery.fancybox.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %meta{:content => "width=device-width, user-scalable=no", :name => "viewport"}/
+
+    %title= config.site_title
+    %link{:href => "css/styles.css", :rel => "stylesheet"}/
+
+  %body
+    %h1.page-title= config.site_title
+
+    .images
+      - images.each do |image|
+        .image
+          %img{src: image.thumb_url }
