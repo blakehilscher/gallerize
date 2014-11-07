@@ -1,9 +1,9 @@
 require 'fileutils'
-# require 'sass/engine'
 require 'gallerize_cli/image'
 require 'sass'
 require 'sass/engine'
 require 'uglifier'
+require 'parallel'
 
 module GallerizeCli
   class Directory
@@ -17,7 +17,10 @@ module GallerizeCli
 
     def process
       install
-      images.each(&:process)
+      Parallel.each(images, in_processes: config.parallel['in_processes']) do |image|
+        puts 'processing'
+        image.process
+      end
     end
 
     def total_images_count

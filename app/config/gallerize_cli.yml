@@ -17,3 +17,7 @@ versions:
   large:
     width: 800
     height: 600
+
+
+parallel:
+  in_processes: 6
