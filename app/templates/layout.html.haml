@@ -22,7 +22,7 @@
           - total_pages.times do |i|
             %li{class: "#{'active' if current_page == i + 2}"}
               %a{href: site_url("page-#{i + 2}.html")}= i + 2
-              
+
       .images
         - images.each do |image|
           .image
