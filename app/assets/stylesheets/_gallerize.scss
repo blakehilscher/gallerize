@@ -43,37 +43,43 @@ body {
   margin-top: 5px;
   margin-bottom: 10px;
   margin-left: 5px;
-  .active,
-  a:hover {
-    background-color: #901414;
-    color: #fff;
-  }
-  ul,li {
+  ul, li {
     list-style-type: none;
     margin: 0;
     padding: 0;
   }
-  .active{
-    background-color: red;
-  }
   li {
     float: left;
+    margin-right: 2px;
+    margin-bottom: 2px;
+
+  }
+  a {
     display: inline-block;
     text-decoration: none;
     padding: 7px 10px 5px;
 
     background: #ddd;
-    margin-right: 2px;
-    margin-bottom: 2px;
 
-    color: #901414;
+    color: #0f84ff;
     font-weight: bold;
+  }
+  a:hover {
+    background-color: #0f84ff;
+    color: #fff;
+  }
+
+  .active {
+    a {
+      background-color: #0f84ff;
+      color: #fff;
+    }
   }
 }
 
 .page-title {
   margin: 20px 5px 5px 5px;
-  color: #901414;
+  color: #0f84ff;
 }
 
 @media (min-width: 0px) and (max-width: 500px) {
