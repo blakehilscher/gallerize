@@ -9,7 +9,6 @@ module GallerizeCli
 
   class << self
     def perform
-      puts "source root: #{root}"
       directory = GallerizeCli::Directory.new(File.expand_path('.'))
       directory.process
       GallerizeCli::Render.new(directory).perform

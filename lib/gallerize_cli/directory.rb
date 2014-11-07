@@ -100,6 +100,7 @@ module GallerizeCli
       mkdir_p(output_path) unless Dir.exists?(output_path)
       mkdir_p(images_path) unless Dir.exists?(images_path)
       mkdir_p(assets_path) unless Dir.exists?(assets_path)
+      cp_r(File.join(app_install_path, 'assets/images'), File.join(assets_path))
     end
 
   end

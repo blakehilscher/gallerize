@@ -14,8 +14,9 @@
 
   %body
     %h1.page-title= config.site_title
-
-    .images
-      - images.each do |image|
-        .image
-          %img{src: image.thumb_url }
+    #images-container
+      .images
+        - images.each do |image|
+          .image
+            %a.image-link.fancybox{href: image.large_url, data:{ full: image.full_url }}
+              %img{src: image.thumb_url }
