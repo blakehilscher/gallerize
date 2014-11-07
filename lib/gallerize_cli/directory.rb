@@ -3,6 +3,7 @@ require 'fileutils'
 require 'gallerize_cli/image'
 require 'sass'
 require 'sass/engine'
+require 'uglifier'
 
 module GallerizeCli
   class Directory
@@ -44,7 +45,7 @@ module GallerizeCli
     end
 
     def javascripts_min_path
-      @javascripts_min_path ||= compile_javascripts
+      @javascripts_min_path ||= compile_javascripts.gsub(output_path, config.site_url)
     end
 
     def stylesheets_min_path
@@ -54,7 +55,16 @@ module GallerizeCli
     private
 
     def compile_javascripts
-      File.join(app_install_path, 'source/javascripts')
+      # compile files
+      load_path = File.join(app_install_path, 'assets/javascripts')
+      output = Dir.glob(File.join(load_path, '**/*.js')).collect do |js_file|
+        Uglifier.new.compile(File.read(js_file))
+      end.join
+      # write minified file
+      output_file = File.join(assets_path, "gallerize_cli-#{Digest::MD5.hexdigest(output)}.min.js")
+      GallerizeCli.logger.debug("generated #{output_file}")
+      File.write(output_file, output)
+      output_file
     end
 
     def compile_stylesheets
@@ -67,8 +77,8 @@ module GallerizeCli
       source = File.read(scss_file)
       output = Sass::Engine.new(source, style: :compressed, syntax: :scss).render
       # write new file
-      output_file = File.join(assets_path, File.basename(scss_file, '.scss')) + "-#{Digest::MD5.hexdigest(output)}.css"
-      GallerizeCli.logger.debug("generate #{output_file}")
+      output_file = File.join(assets_path, "gallerize_cli-#{Digest::MD5.hexdigest(output)}.min.css")
+      GallerizeCli.logger.debug("generated #{output_file}")
       File.write(output_file, output)
       output_file
     end
