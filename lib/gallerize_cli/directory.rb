@@ -18,7 +18,6 @@ module GallerizeCli
     def process
       install
       Parallel.each(images, in_processes: config.parallel['in_processes']) do |image|
-        puts 'processing'
         image.process
       end
     end
