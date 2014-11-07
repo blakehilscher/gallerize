@@ -9,12 +9,10 @@ module GallerizeCli
 
     def initialize(path)
       @root_path = File.expand_path(path)
-      puts "install root #{path}"
     end
 
-    def perform
+    def process
       install
-      images.each { |i| puts i.thumb_url }
       images.each(&:process)
     end
 
@@ -34,11 +32,14 @@ module GallerizeCli
       @output_path ||= File.expand_path(config.output_path)
     end
 
+    def app_install_path
+      File.join(root_path, '.gallerize_cli')
+    end
+
     private
 
     def load_images
       output = []
-      puts config
       Dir.chdir(root_path) do
         config.file_patterns.each do |file_pattern|
           Dir.glob(file_pattern) do |file_path|
@@ -53,10 +54,6 @@ module GallerizeCli
       cp_r(GallerizeCli.app_source_path, app_install_path)
       mkdir_p(output_path)
       mkdir_p(images_path)
-    end
-
-    def app_install_path
-      File.join(root_path, '.gallerize_cli')
     end
 
   end

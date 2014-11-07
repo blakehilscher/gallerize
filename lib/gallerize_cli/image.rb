@@ -58,6 +58,5 @@ module GallerizeCli
       @success
     end
 
-
   end
 end

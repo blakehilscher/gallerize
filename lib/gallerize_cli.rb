@@ -1,4 +1,5 @@
 require 'gallerize_cli/directory'
+require 'gallerize_cli/render'
 require 'yaml'
 require 'ostruct'
 require 'pry'
@@ -9,7 +10,9 @@ module GallerizeCli
   class << self
     def perform
       puts "source root: #{root}"
-      GallerizeCli::Directory.new(File.expand_path('.')).perform
+      directory = GallerizeCli::Directory.new(File.expand_path('.'))
+      directory.process
+      GallerizeCli::Render.new(directory).perform
     end
 
     def app_source_path
