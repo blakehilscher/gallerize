@@ -48,7 +48,7 @@ module GallerizeCli
     end
 
     def stylesheets_min_path
-      @stylesheets_min_path ||= compile_stylesheets
+      @stylesheets_min_path ||= compile_stylesheets.gsub(output_path, config.site_url)
     end
 
     private
@@ -62,16 +62,15 @@ module GallerizeCli
       load_path = File.join(app_install_path, 'assets/stylesheets')
       # this is undefined for some unknown reason
       Sass.define_singleton_method(:load_paths) { [load_path] }
-      # compile stylesheets
-      manifest = File.read(File.join(load_path, 'app.scss'))
-      output = Sass::Engine.new(manifest, style: :compressed, syntax: :scss).render
-
-      # sass_engine = Sass::Engine.new(template)
-      # output = sass_engine.render
-      style_file = File.join(assets_path, "styles-#{Digest::SHA256.hexdigest('output')[0..8]}.css")
-      GallerizeCli.logger.debug("generate #{style_file}")
-      File.write(style_file, output)
-      style_file
+      # compile styles.scss
+      scss_file = File.join(load_path, 'styles.scss')
+      source = File.read(scss_file)
+      output = Sass::Engine.new(source, style: :compressed, syntax: :scss).render
+      # write new file
+      output_file = File.join(assets_path, File.basename(scss_file, '.scss')) + "-#{Digest::MD5.hexdigest(output)}.css"
+      GallerizeCli.logger.debug("generate #{output_file}")
+      File.write(output_file, output)
+      output_file
     end
 
     def load_images
