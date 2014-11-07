@@ -1,6 +1,16 @@
 body {
   font-family: arial;
 }
+.fancybox-title.fancybox-title-float-wrap {
+  bottom: -20px;
+  a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: normal;
+    padding: 10px;
+    display: block;
+  }
+}
 
 .images {
   overflow: hidden;

@@ -18,5 +18,7 @@
       .images
         - images.each do |image|
           .image
-            %a.image-link.fancybox{rel: 'group', href: image.large_url, title: "<a href='#{image.original_url}'>Download Full Resolution</a>"}
+            - title = capture_haml do
+              %a{href: image.original_url, target: :blank } Download Full Resolution
+            %a.image-link.fancybox{rel: 'group', href: image.large_url, title: title }
               %img{src: image.thumb_url }
