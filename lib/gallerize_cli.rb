@@ -2,6 +2,7 @@ require 'gallerize_cli/directory'
 require 'yaml'
 require 'ostruct'
 require 'pry'
+require 'logger'
 
 module GallerizeCli
 

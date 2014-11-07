@@ -14,6 +14,7 @@ module GallerizeCli
 
     def perform
       install
+      images.each { |i| puts i.thumb_url }
       images.each(&:process)
     end
 
@@ -25,12 +26,12 @@ module GallerizeCli
       @config ||= OpenStruct.new(YAML.load(File.read(File.join(app_install_path, 'config/gallerize_cli.yml'))))
     end
 
-    def image_path
-      @image_path ||= File.join(output_path, 'images')
+    def images_path
+      @images_path ||= File.join(output_path, 'images')
     end
 
     def output_path
-      @output_path ||= File.expand_path(output_path)
+      @output_path ||= File.expand_path(config.output_path)
     end
 
     private
@@ -40,8 +41,8 @@ module GallerizeCli
       puts config
       Dir.chdir(root_path) do
         config.file_patterns.each do |file_pattern|
-          Dir.glob(file_pattern) do |image_path|
-            output << GallerizeCli::Image.new(self, image_path)
+          Dir.glob(file_pattern) do |file_path|
+            output << GallerizeCli::Image.new(self, file_path)
           end
         end
       end
@@ -51,7 +52,7 @@ module GallerizeCli
     def install
       cp_r(GallerizeCli.app_source_path, app_install_path)
       mkdir_p(output_path)
-      mkdir_p(image_path)
+      mkdir_p(images_path)
     end
 
     def app_install_path
