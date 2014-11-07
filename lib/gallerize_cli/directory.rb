@@ -102,7 +102,7 @@ module GallerizeCli
     end
 
     def install
-      cp_r(GallerizeCli.app_source_path, app_install_path)
+      Dir.chdir(GallerizeCli.app_source_path){ cp_r('.', app_install_path) }
       mkdir_p(output_path) unless Dir.exists?(output_path)
       mkdir_p(images_path) unless Dir.exists?(images_path)
       mkdir_p(assets_path) unless Dir.exists?(assets_path)
