@@ -16,6 +16,12 @@ module GallerizeCli
 
     end
 
+    def original_url
+      destination = File.join(directory.images_path, file_name)
+      cp(file_path, destination) unless File.exists?(destination)
+      destination.gsub(directory.output_path, config.site_url)
+    end
+
     def initialize(directory, file_path)
       @success = true
       @directory = directory
