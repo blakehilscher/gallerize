@@ -2,10 +2,11 @@ require 'gallerize_cli/directory'
 require 'gallerize_cli/render'
 require 'yaml'
 require 'ostruct'
-require 'pry'
 require 'logger'
 
 module GallerizeCli
+
+  VERSION='0.3.0'
 
   class << self
     def perform
