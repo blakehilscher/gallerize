@@ -20,6 +20,7 @@ module GallerizeCli
 
     def root
       @root ||= File.expand_path(File.join(__FILE__, '../../'))
+
     end
 
     def logger

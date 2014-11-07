@@ -20,6 +20,10 @@ module GallerizeCli
       images.each(&:process)
     end
 
+    def total_images_count
+      images.count
+    end
+
     def images
       @images ||= load_images
     end

@@ -2,6 +2,8 @@ site_title: Gallerize Title
 site_url: '.'
 output_path: gallerize
 
+images_per_page: 2
+
 file_patterns:
   - "*.jpg"
   - "*.png"

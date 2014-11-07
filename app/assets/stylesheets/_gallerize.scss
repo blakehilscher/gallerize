@@ -1,6 +1,7 @@
 body {
   font-family: arial;
 }
+
 .fancybox-title.fancybox-title-float-wrap {
   bottom: -20px;
   a {
@@ -47,7 +48,15 @@ body {
     background-color: #901414;
     color: #fff;
   }
-  a {
+  ul,li {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+  .active{
+    background-color: red;
+  }
+  li {
     float: left;
     display: inline-block;
     text-decoration: none;
