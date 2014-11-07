@@ -18,5 +18,5 @@
       .images
         - images.each do |image|
           .image
-            %a.image-link.fancybox{href: image.large_url, data:{ full: image.full_url }}
+            %a.image-link.fancybox{rel: 'group', href: image.large_url, data:{ full: image.full_url }}
               %img{src: image.thumb_url }
