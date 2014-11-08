@@ -69,7 +69,6 @@ module GallerizeCli
       end
 
       def resize(mini_image, width, height)
-        GallerizeCli.logger.debug "resize #{width}x#{height}"
         if mini_image[:width] > mini_image[:height]
           mini_image.resize "#{width}x#{height}>"
         else

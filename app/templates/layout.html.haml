@@ -29,5 +29,5 @@
           .image
             - title = capture_haml do
               %a{href: image.original_url, target: :blank } Download Full Resolution
-            %a.image-link.fancybox{rel: 'group', href: image.large_url, title: title }
+            %a.image-link.fancybox{rel: 'group', href: image.large_url, title: title, data: {original: image.original_url} }
               %img{src: image.thumb_url }
