@@ -15,13 +15,14 @@
   %body
     %h1.page-title= config.site_title
     #images-container
-      .navigation
-        %ul
-          %li{class: "#{'active' if current_page == 1}"}
-            %a{href: site_url('index.html')} 1
-          - total_pages.times do |i|
-            %li{class: "#{'active' if current_page == i + 2}"}
-              %a{href: site_url("page-#{i + 2}.html")}= i + 2
+      - if total_pages > 1
+        .navigation
+          %ul
+            %li{class: "#{'active' if current_page == 1}"}
+              %a{href: site_url('index.html')} 1
+            - total_pages.times do |i|
+              %li{class: "#{'active' if current_page == i + 2}"}
+                %a{href: site_url("page-#{i + 2}.html")}= i + 2
 
       .images
         - images.each do |image|

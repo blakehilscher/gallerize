@@ -11,13 +11,14 @@ file_patterns:
 
 versions:
   thumb:
-    width: 250
-    height: 300
+    width: 400
+    height: 250
+    approach: crop
 
   large:
-    width: 800
-    height: 600
-
+    width: 1000
+    height: 800
+    approach: resize
 
 parallel:
   in_processes: 6

@@ -51,22 +51,42 @@ module GallerizeCli
           GallerizeCli.logger.debug "version: #{name} is missing width: #{width} or height: #{height}"
 
         elsif !File.exists?(file_path)
-          GallerizeCli.logger.debug "generating #{file_path}"
+          GallerizeCli.logger.debug "generating #{options.approach} #{file_path}"
           # open it up
           mini_image = MiniMagick::Image.open(image.file_path)
           mini_image.auto_orient
-          # landscape?
-          if mini_image[:width] > mini_image[:height]
-            mini_image.resize "#{width}x#{height}"
+          if options.approach == 'crop'
+            crop(mini_image, width, height)
           else
-            # portrait
-            mini_image.resize "#{height}x#{width.to_i * 1.25}"
+            resize(mini_image, width, height)
           end
+          # landscape?
           mini_image.write file_path
         end
       rescue => err
         @valid = false
-        GallerizeCli.logger.debug "#{err}. image.file_name: #{image.file_name} name: #{name} options: #{options}"
+        GallerizeCli.logger.debug "#{err} image.file_name: #{image.file_name} name: #{name} options: #{options}"
+      end
+
+      def resize(mini_image, width, height)
+        GallerizeCli.logger.debug "resize #{width}x#{height}"
+        if mini_image[:width] > mini_image[:height]
+          mini_image.resize "#{width}x#{height}>"
+        else
+          # portrait
+          mini_image.resize "#{height}x#{width.to_i * 1.25}"
+        end
+      end
+
+      def crop(mini_image, width, height)
+        max = width > height ? width : height
+        if mini_image[:width] > mini_image[:height]
+          resize(mini_image, max * 2, height)
+        else
+          resize(mini_image, width, max * 2)
+        end
+
+        mini_image.crop "#{width}x#{height}+0+0"
       end
 
       def load_file_path
