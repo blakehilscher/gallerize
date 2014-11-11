@@ -66,6 +66,8 @@ module GallerizeCli
       output = Dir.glob(File.join(load_path, '**/*.js')).collect do |js_file|
         Uglifier.new.compile(File.read(js_file))
       end.join
+      # delete previous payload(s)
+      Dir.glob(File.join(assets_path, "gallerize_cli-*.min.js")){|f| rm(f) }
       # write minified file
       output_file = File.join(assets_path, "gallerize_cli-#{Digest::MD5.hexdigest(output)}.min.js")
       GallerizeCli.logger.debug("generated #{output_file}")
@@ -82,6 +84,8 @@ module GallerizeCli
       scss_file = File.join(load_path, 'styles.scss')
       source = File.read(scss_file)
       output = Sass::Engine.new(source, style: :compressed, syntax: :scss).render
+      # delete previous payload(s)
+      Dir.glob(File.join(assets_path, "gallerize_cli-*.min.css")){|f| rm(f) }
       # write new file
       output_file = File.join(assets_path, "gallerize_cli-#{Digest::MD5.hexdigest(output)}.min.css")
       GallerizeCli.logger.debug("generated #{output_file}")
