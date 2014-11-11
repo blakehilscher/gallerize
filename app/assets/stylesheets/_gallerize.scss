@@ -17,12 +17,29 @@ body {
   overflow: hidden;
   .image {
     float: left;
-
+    .image-inner{
+      border: 1px solid #ccc;
+    }
+    .original-link{
+      color: #0f84ff;
+      text-decoration: none;
+      font-weight: bold;
+      display: block;
+      padding: 5px 10px;
+      background-color: #eee;
+      font-size: 14px;
+      &:hover{
+        background-color: #0f84ff;
+        color: #fff;
+      }
+    }
     .image-link {
       padding: 20px 10px;
       overflow: hidden;
       display: block;
+      height: 190px;
       text-align: center;
+
     }
   }
 }
@@ -112,5 +129,13 @@ body {
 @media (min-width: 2801px) {
   .image {
     width: 10%;
+  }
+}
+
+.fancybox-title-float-wrap .child{
+  background-color: #02baf0;
+  text-shadow: 0 1px 2px 026684;
+  a{
+    font-weight: bold;
   }
 }

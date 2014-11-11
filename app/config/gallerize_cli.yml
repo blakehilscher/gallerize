@@ -22,3 +22,7 @@ versions:
 
 parallel:
   in_processes: 6
+
+image_attributes:
+  example.jpg:
+    title: The Title

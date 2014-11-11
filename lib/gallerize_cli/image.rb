@@ -16,6 +16,10 @@ module GallerizeCli
 
     end
 
+    def attributes
+      @attributes ||= fetch_attributes
+    end
+
     def original_url
       destination = File.join(directory.images_path, file_name)
       cp(file_path, destination) unless File.exists?(destination)
@@ -31,6 +35,13 @@ module GallerizeCli
 
     def process
       versions.each { |name, version| version.process }
+    end
+
+    def name
+      return @name if defined?(@name)
+      parts = file_name.split('.')
+      parts.pop
+      @name = parts.join('.')
     end
 
     def file_name
@@ -53,6 +64,14 @@ module GallerizeCli
     end
 
     private
+
+    def fetch_attributes
+      hash = {}
+      if config.image_attributes.is_a?(Hash)
+        hash = config.image_attributes[file_name] || {}
+      end
+      OpenStruct.new(hash)
+    end
 
     def generate_version_methods
       versions.each do |name, version|
