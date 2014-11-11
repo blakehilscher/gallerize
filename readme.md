@@ -23,13 +23,17 @@ gem install gallerize-cli
 
 ```
 $ cd folder-with-pictures
-$ gallerize
+$ gallerize_cli
 $ open gallerize/index.html
 ```
 
 
 ### Configuration
 
-After you run 'gallerize_cli' it generates a .gallerize-cli folder. You can modify the contents to alter how your gallery is generated.
+```
+open .gallerize_cli
+```
 
-This folder contains scss, js, images, and haml templates.
+After you run 'gallerize_cli' it generates a .gallerize_cli folder. You can modify the contents to alter how your gallery is generated.
+
+This folder contains configuration, scss, js, images, and haml templates.
