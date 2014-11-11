@@ -1,3 +1,9 @@
+$base_color: #852800;
+
+$faint_color: desaturate(lighten($base_color, 65%), 50%);
+$light_color: desaturate(lighten($base_color, 40%), 50%);
+$dark_color: darken($base_color, 40%);
+
 body {
   font-family: arial;
 }
@@ -18,28 +24,25 @@ body {
   .image {
     float: left;
     .image-inner{
-      border: 1px solid #ccc;
+      margin: 5px;
     }
     .original-link{
-      color: #0f84ff;
+      color: $base_color;
       text-decoration: none;
       font-weight: bold;
       display: block;
       padding: 5px 10px;
-      background-color: #eee;
+      background-color: $faint_color;
       font-size: 14px;
       &:hover{
-        background-color: #0f84ff;
+        background-color: $base_color;
         color: #fff;
       }
     }
     .image-link {
-      padding: 20px 10px;
       overflow: hidden;
       display: block;
-      height: 190px;
       text-align: center;
-
     }
   }
 }
@@ -75,17 +78,17 @@ body {
 
     background: #ddd;
 
-    color: #0f84ff;
+    color: $base_color;
     font-weight: bold;
   }
   a:hover {
-    background-color: #0f84ff;
+    background-color: $base_color;
     color: #fff;
   }
 
   .active {
     a {
-      background-color: #0f84ff;
+      background-color: $base_color;
       color: #fff;
     }
   }
@@ -93,7 +96,7 @@ body {
 
 .page-title {
   margin: 20px 5px 5px 5px;
-  color: #0f84ff;
+  color: $base_color;
 }
 
 @media (min-width: 0px) and (max-width: 500px) {
@@ -110,31 +113,31 @@ body {
 
 @media (min-width: 1001px) and (max-width: 1600px) {
   .image {
-    width: 25%;
+    width: 33%;
   }
 }
 
 @media (min-width: 1601px) and (max-width: 2000px) {
   .image {
-    width: 20%;
+    width: 25%;
   }
 }
 
 @media (min-width: 2001px) and (max-width: 2800px) {
   .image {
-    width: 15%;
+    width: 20%;
   }
 }
 
 @media (min-width: 2801px) {
   .image {
-    width: 10%;
+    width: 15%;
   }
 }
 
 .fancybox-title-float-wrap .child{
-  background-color: #02baf0;
-  text-shadow: 0 1px 2px 026684;
+  background-color: $base_color;
+  text-shadow: 0 1px 2px $dark_color;
   a{
     font-weight: bold;
   }
