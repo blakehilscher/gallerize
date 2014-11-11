@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "gallerize"
+require "gallerize_cli"
 
 Gem::Specification.new do |s|
   s.name = "gallerize-cli"
-  s.version = Gallerize::VERSION
+  s.version = GallerizeCli::VERSION
   s.authors = ["Blake Hilscher"]
   s.email = ["blake@hilscher.ca"]
   s.homepage = "http://blake.hilscher.ca/"
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables = ["gallerize"]
+  s.executables = ["gallerize_cli"]
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency 'mini_magick', '3.7.0'

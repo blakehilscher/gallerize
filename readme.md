@@ -30,6 +30,6 @@ $ open gallerize/index.html
 
 ### Configuration
 
-After you run 'gallerize' it generates a .gallerize-cli folder. You can modify the contents to alter how your gallery is generated.
+After you run 'gallerize_cli' it generates a .gallerize-cli folder. You can modify the contents to alter how your gallery is generated.
 
 This folder contains scss, js, images, and haml templates.
