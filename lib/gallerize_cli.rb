@@ -6,7 +6,7 @@ require 'logger'
 
 module GallerizeCli
 
-  VERSION='0.3.1'
+  VERSION='0.3.2'
 
   class << self
     def perform
