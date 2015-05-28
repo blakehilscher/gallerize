@@ -1,4 +1,4 @@
-site_title: Gallerize Title
+site_title:
 site_url: '.'
 output_path: gallerize
 
@@ -6,22 +6,21 @@ images_per_page: 40
 
 file_patterns:
   - "*.jpg"
+  - "*.jpeg"
   - "*.png"
   - "*.gif"
 
 versions:
   thumb:
     width: 400
-    height: 250
-    approach: crop
+    height: 300
 
   large:
-    width: 1000
-    height: 800
-    approach: resize
+    width: 1600
+    height: 1200
 
 parallel:
-  in_processes: 6
+  in_processes: 8
 
 image_attributes:
   example.jpg:

@@ -22,7 +22,7 @@
         ga('send', 'pageview');
 
   %body
-    %h1.page-title= config.site_title
+    %h1.page-title= config.site_title || human_folder_name
     #images-container
       - if total_pages > 1
         .navigation

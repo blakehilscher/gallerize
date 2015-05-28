@@ -37,6 +37,14 @@ module GallerizeCli
         @locals = locals
       end
 
+      def human_folder_name
+        humanize(File.basename(File.expand_path('.')))
+      end
+
+      def humanize(string)
+        string.to_s.gsub(/[-_]+/, ' ').split(' ').collect(&:capitalize).join(' ')
+      end
+
       def render
         GallerizeCli.logger.debug("generate #{file_path}")
         File.write(file_path, Haml::Engine.new(template).render(self, locals))

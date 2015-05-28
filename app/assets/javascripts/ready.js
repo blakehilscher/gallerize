@@ -1,8 +1,9 @@
 (function () {
     $(document).ready(function () {
-        if ($(window).width() > 800) {
+        if ($(window).width() >= 800) {
             $('.fancybox').fancybox();
-        } else {
+        }
+        else {
             $('.image-link').each(function () {
                 var image = $(this);
                 var original = image.data('original');

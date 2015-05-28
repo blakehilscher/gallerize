@@ -29,6 +29,7 @@ module GallerizeCli
     end
 
     private
+
     def init_logger
       l = Logger.new(STDOUT)
       l.formatter = proc do |severity, datetime, progname, msg|
