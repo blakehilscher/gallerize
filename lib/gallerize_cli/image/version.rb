@@ -8,6 +8,8 @@ module GallerizeCli
 
       attr_accessor :image, :name, :options
 
+      GRAVITY_TYPES = [:north_west, :north, :north_east, :east, :south_east, :south, :south_west, :west, :center]
+
       def initialize(image, name, options)
         @image = image
         @name = name
@@ -93,8 +95,6 @@ module GallerizeCli
         img
       end
 
-      GRAVITY_TYPES = [:north_west, :north, :north_east, :east, :south_east, :south, :south_west, :west, :center]
-
       def crop_offsets_by_gravity(gravity, original_dimensions, cropped_dimensions)
         raise(ArgumentError, "Gravity must be one of #{GRAVITY_TYPES.inspect}") unless GRAVITY_TYPES.include?(gravity.to_sym)
         raise(ArgumentError, "Original dimensions must be supplied as a [ width, height ] array") unless original_dimensions.kind_of?(Enumerable) && original_dimensions.size == 2
@@ -122,26 +122,6 @@ module GallerizeCli
                             end
 
         [horizontal_offset, vertical_offset]
-      end
-
-      def resize(mini_image, width, height)
-        if mini_image[:width] > mini_image[:height]
-          mini_image.resize "#{width}x#{height}>"
-        else
-          # portrait
-          mini_image.resize "#{height}x#{width.to_i * 1.25}"
-        end
-      end
-
-      def crop(mini_image, width, height)
-        max = width > height ? width : height
-        if mini_image[:width] > mini_image[:height]
-          resize(mini_image, max * 2, height)
-        else
-          resize(mini_image, width, max * 2)
-        end
-
-        mini_image.crop "#{width}x#{height}+0+0"
       end
 
       def load_file_path
