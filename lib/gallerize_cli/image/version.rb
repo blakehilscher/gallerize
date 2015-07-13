@@ -37,6 +37,10 @@ module GallerizeCli
         options.height.to_i
       end
 
+      def method
+        options.method
+      end
+
       def valid?
         !!@valid
       end
@@ -66,8 +70,8 @@ module GallerizeCli
         GallerizeCli.logger.debug "#{err} image.file_name: #{image.file_name} name: #{name} options: #{options}"
       end
 
-      def resize_with_crop(img, w, h, options = {})
-        gravity = options[:gravity] || :center
+      def resize_with_crop(img, w, h, opts = {})
+        gravity = opts[:gravity] || :center
 
         w_original, h_original = [img[:width].to_f, img[:height].to_f]
 
@@ -89,7 +93,7 @@ module GallerizeCli
         img.combine_options do |i|
           i.resize(op_resize)
           i.gravity(gravity)
-          i.crop "#{w.to_i}x#{h.to_i}+#{w_offset}+#{h_offset}!"
+          i.crop "#{w.to_i}x#{h.to_i}+#{w_offset}+#{h_offset}!" if options.crop
         end
 
         img

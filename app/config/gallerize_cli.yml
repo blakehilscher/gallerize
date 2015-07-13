@@ -14,10 +14,12 @@ versions:
   thumb:
     width: 400
     height: 300
+    crop: true
 
   large:
     width: 1600
     height: 1200
+    crop: false
 
 parallel:
   in_processes: 8
